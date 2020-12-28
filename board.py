@@ -2,14 +2,14 @@ import pygame
 import os
 
 class Board:
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
+    def __init__(self, width, height,dir,hardness):
+        self.width,self.height  = hardness
         self.board = [[0] * width for _ in range(height)]
-        self.left = 10
-        self.top = 10
-        self.cell_size = 30
-        self.new_board()
+        self.left = 30
+        self.top = 30
+        self.cell_size = ((width-60)//6,(height-60)//4)
+        print(self.cell_size)
+        self.new_board(dir)
 
     def new_board(self,dir):
         print("Текущая деректория:", os.getcwd())
@@ -25,8 +25,8 @@ class Board:
     def render(self, screen):
         for i in range(self.height):
             for j in range(self.width):
-                    pygame.draw.rect(screen, 'green', (self.left + self.cell_size * j, self.top + self.cell_size * i,
-                                                       self.cell_size, self.cell_size), width=0)
+                    pygame.draw.rect(screen, 'green', (self.left + self.cell_size[0] * j, self.top + self.cell_size[1] * i,
+                                                       self.cell_size[0], self.cell_size[1]), width=2)
 
     def get_cell(self, pos):
         if self.left + self.cell_size * self.width >= pos[0] >= self.left:
