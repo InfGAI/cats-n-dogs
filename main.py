@@ -77,15 +77,36 @@ def start_screen():
         pygame.display.flip()
         clock.tick(FPS)
 
+def end_screen(cat, dog):
+    line = f'{cat.name}     {cat.score}' + ' ' * 60 + f'{dog.name}     {dog.score}'
+    fon = load_image('winner.jpg', (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 50)
+    text_coord = 50
+
+    string_rendered = font.render(line, 1, pygame.Color('red'))
+    line_rect = string_rendered.get_rect()
+    screen.blit(string_rendered, (10, 20))
+    if cat.score > dog.score:
+        winner = cat
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                return  # начинаем игру
+        pygame.display.flip()
+        clock.tick(FPS)
 
 def score(cat, dog):
-    line = f'Кошечка {cat}         Собачка {dog}'
+    line = f'Кошечка {cat.score}         Собачка {dog.score}'
     font = pygame.font.Font(None, 30)
     text_coord = 30
     return font.render(line, 1, pygame.Color('white'))
 
+
 start_screen()
-hardness = (6, 4)
+hardness = (4, 2)
 print('start')
 running = True
 players_group = pygame.sprite.Group()
@@ -93,8 +114,8 @@ cards = board.Board(WIDTH, HEIGHT, 'cards.jpg', hardness)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Кошечки и собачки')
 
-cat = players.Player('cat', cards.cell_size, cards.cell_size[0] // 4, 30)
-dog = players.Player('dog', cards.cell_size, cards.cell_size[0] // 4, 30)
+cat = players.Player('cat', cards.cell_size, cards.cell_size[0] // 4, 30, 'Кошечка')
+dog = players.Player('dog', cards.cell_size, cards.cell_size[0] // 4, 30, 'Собачка')
 players_group.add(cat)
 players_group.add(dog)
 dir = 'idle'
@@ -103,9 +124,10 @@ count = -1
 card_checked = False
 card1 = None
 card2 = None
+winner = None
 while running:
     screen.fill((0, 0, 0))
-    screen.blit(score(0, 0), (50, 10))
+    screen.blit(score(cat, dog), (50, 10))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -132,6 +154,8 @@ while running:
             print(cards.check(card1, card2))
             if not cards.check(card1, card2):
                 cards.close(card1, card2)
+            else:
+                current_player.score += 1
 
         if count % 2 == 0:
             card1 = current_card
@@ -151,11 +175,14 @@ while running:
 
     '''tiles_group.draw(screen)
     player_group.draw(screen)'''
+
     cards.render(screen)
     players_group.update()
     players_group.draw(screen)
     pygame.display.flip()
+    if 2 * (cat.score + dog.score) == hardness[0] * hardness[1]:
+        running = False
 
     clock.tick(FPS)
-
+end_screen(cat, dog)
 terminate()

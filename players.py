@@ -27,10 +27,11 @@ def load_image(name, size=None, color_key=None):
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, player_dir, size, pos_x, pos_y):
+    def __init__(self, player_dir, size, pos_x, pos_y, name):
         super().__init__()
-        player_dir=os.path.join('movies',player_dir)
+        player_dir = os.path.join('movies', player_dir)
         img_path = os.path.join(player_dir, 'idle', 'Idle (1).png')
+        self.name = name
         self.size = size
         self.image = load_image(img_path, size=size)
         self.rect = self.image.get_rect().move(pos_x, pos_y)
@@ -42,7 +43,8 @@ class Player(pygame.sprite.Sprite):
             'idle': [load_image(os.path.join(player_dir, 'idle', file), size) for file in
                      os.listdir(os.path.join(player_dir, 'idle'))]}
         self.cur_frame = 0
-        self.dir='idle'
+        self.dir = 'idle'
+        self.score = 0
 
     def update(self):
         # print(self.cur_frame)
