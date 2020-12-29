@@ -32,7 +32,7 @@ class Board:
         self.width, self.height = hardness
 
         self.left = 30
-        self.top = 30
+        self.top = 60
         self.cell_size = ((width - 60) // 6, (height - 60) // 4)
 
         frames = self.new_board(dir)

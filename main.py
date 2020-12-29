@@ -77,6 +77,13 @@ def start_screen():
         pygame.display.flip()
         clock.tick(FPS)
 
+
+def score(cat, dog):
+    line = f'Кошечка {cat}         Собачка {dog}'
+    font = pygame.font.Font(None, 30)
+    text_coord = 30
+    return font.render(line, 1, pygame.Color('white'))
+
 start_screen()
 hardness = (6, 4)
 print('start')
@@ -85,6 +92,7 @@ players_group = pygame.sprite.Group()
 cards = board.Board(WIDTH, HEIGHT, 'cards.jpg', hardness)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Кошечки и собачки')
+
 cat = players.Player('cat', cards.cell_size, cards.cell_size[0] // 4, 30)
 dog = players.Player('dog', cards.cell_size, cards.cell_size[0] // 4, 30)
 players_group.add(cat)
@@ -97,6 +105,7 @@ card1 = None
 card2 = None
 while running:
     screen.fill((0, 0, 0))
+    screen.blit(score(0, 0), (50, 10))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
