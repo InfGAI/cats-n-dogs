@@ -32,15 +32,15 @@ class Player(pygame.sprite.Sprite):
         player_dir=os.path.join('movies',player_dir)
         img_path = os.path.join(player_dir, 'idle', 'Idle (1).png')
         self.size = size
-        self.image = pygame.transform.scale(load_image(img_path), size)
+        self.image = load_image(img_path, size=size)
         self.rect = self.image.get_rect().move(pos_x, pos_y)
         self.frames = {
-            'right': [pygame.transform.scale(load_image(os.path.join(player_dir,'right', file)), size) for file in
-                      os.listdir(os.path.join(player_dir,'right'))],
-            'left': [pygame.transform.scale(load_image(os.path.join(player_dir,'left', file)), size) for file in
-                     os.listdir(os.path.join(player_dir,'left'))],
-            'idle': [pygame.transform.scale(load_image(os.path.join(player_dir,'idle', file)), size) for file in
-                     os.listdir(os.path.join(player_dir,'idle'))]}
+            'right': [load_image(os.path.join(player_dir, 'right', file), size) for file in
+                      os.listdir(os.path.join(player_dir, 'right'))],
+            'left': [load_image(os.path.join(player_dir, 'left', file), size) for file in
+                     os.listdir(os.path.join(player_dir, 'left'))],
+            'idle': [load_image(os.path.join(player_dir, 'idle', file), size) for file in
+                     os.listdir(os.path.join(player_dir, 'idle'))]}
         self.cur_frame = 0
         self.dir='idle'
 

@@ -10,7 +10,7 @@ pygame.init()
 pygame.key.set_repeat(200, 70)
 
 FPS = 30
-WIDTH = 800
+WIDTH = 1000
 HEIGHT = 600
 STEP = 10
 
@@ -88,7 +88,7 @@ def start_screen():
                   "Если в правилах несколько строк,",
                   "приходится выводить их построчно"]
 
-    fon = pygame.transform.scale(load_image('grass.png'), (WIDTH, HEIGHT))
+    fon = load_image('grass.png', (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 50
@@ -137,7 +137,7 @@ hardness = (6, 4)
 print('start')
 running = True
 players_group = pygame.sprite.Group()
-cards = board.Board(WIDTH, HEIGHT, '', hardness)
+cards = board.Board(WIDTH, HEIGHT, 'cards.jpg', hardness)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Кошечки и собачки')
 cat = players.Player('cat', cards.cell_size, cards.cell_size[0] // 4, 30)
