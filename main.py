@@ -1,9 +1,10 @@
-import pygame
 import os
 import sys
+
+import pygame
+
 import board
 import players
-
 
 pygame.init()
 pygame.key.set_repeat(200, 70)
@@ -12,7 +13,6 @@ FPS = 30
 WIDTH = 800
 HEIGHT = 600
 STEP = 10
-
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
@@ -23,6 +23,8 @@ tiles_group = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 box_group=pygame.sprite.Group()
 '''
+
+
 def load_image(name, size=None, color_key=None):
     fullname = os.path.join('data', name)
     try:
@@ -41,6 +43,7 @@ def load_image(name, size=None, color_key=None):
         image = image.convert_alpha()
 
     return image
+
 
 '''
 def load_level(filename):
@@ -72,6 +75,8 @@ def generate_level(level):
     return new_player, x, y
 
 '''
+
+
 def terminate():
     pygame.quit()
     sys.exit()
@@ -105,6 +110,7 @@ def start_screen():
         pygame.display.flip()
         clock.tick(FPS)
 
+
 '''
 tile_images = {'wall': load_image('box.png',(80,80)), 'empty': load_image('grass.png',(80,80))}
 player_image = load_image('mario.png', (50, 70))
@@ -127,36 +133,36 @@ class Player(pygame.sprite.Sprite):
 '''
 
 start_screen()
-hardness=(6,4)
+hardness = (6, 4)
 print('start')
 running = True
 players_group = pygame.sprite.Group()
-cards=board.Board(WIDTH,HEIGHT,'',hardness)
-screen = pygame.display.set_mode((WIDTH,HEIGHT))
+cards = board.Board(WIDTH, HEIGHT, '', hardness)
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Кошечки и собачки')
-cat=players.Player('cat',cards.cell_size,cards.cell_size[0]//4,30)
+cat = players.Player('cat', cards.cell_size, cards.cell_size[0] // 4, 30)
+dog = players.Player('dog', cards.cell_size, cards.cell_size[0] // 4, 30)
 players_group.add(cat)
-dir='idle'
-is_move=False
-
+players_group.add(dog)
+dir = 'idle'
+is_move = False
+count=0
 while running:
     screen.fill((0, 0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            x,y=event.pos
-            x1=((x-cards.left)//cards.cell_size[0]*cards.cell_size[0])-1+cards.cell_size[0]//4
-            y1=((y-cards.top)//cards.cell_size[1]*cards.cell_size[1])-1+cards.cell_size[0]//4
-            print(x1,y1)
-            is_move=True
+            count+=1
+            x, y = event.pos
+            x1 = ((x - cards.left) // cards.cell_size[0] * cards.cell_size[0]) - 1 + cards.cell_size[0] // 4
+            y1 = ((y - cards.top) // cards.cell_size[1] * cards.cell_size[1]) - 1 + cards.cell_size[0] // 4
+            print(x1, y1)
+            is_move = True
             start_time = pygame.time.get_ticks()
-            distance = ((x1 - cat.rect.x) ** 2 + (y1 - cat.rect.y) ** 2) ** (1 / 2) # расстояние которое нужно пройти
-            speed = cards.cell_size[0]//(FPS//2) # скорость пережвижения
-            if x1 - cat.rect.x>-x1 + cat.rect.x:
-                dir='right'
-            else:
-                dir='left'
+            distance = ((x1 - cat.rect.x) ** 2 + (y1 - cat.rect.y) ** 2) ** (1 / 2)  # расстояние которое нужно пройти
+            speed = cards.cell_size[0] // (FPS // 2)  # скорость пережвижения
+
 
             '''if event.key == pygame.K_LEFT:
                 cat.rect.x -= STEP
@@ -172,18 +178,14 @@ while running:
     cat.rect.x = cat.rect.x % WIDTH
     cat.rect.y = cat.rect.y % HEIGHT'''
     if is_move:
-        is_move=cat.move(x1, y1,speed)
+        is_move = cat.move(x1, y1, speed)
     else:
-        dir='idle'
-
-
-
-
+        cat.dir = 'idle'
 
     '''tiles_group.draw(screen)
     player_group.draw(screen)'''
     cards.render(screen)
-    cat.update(dir)
+    cat.update()
     players_group.draw(screen)
     pygame.display.flip()
 
