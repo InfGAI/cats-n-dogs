@@ -136,8 +136,9 @@ screen = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption('Кошечки и собачки')
 cat=players.Player('cat',cards.cell_size,cards.cell_size[0]//4,30)
 players_group.add(cat)
-
+dir='idle'
 is_move=False
+
 while running:
     screen.fill((0, 0, 0))
     for event in pygame.event.get():
@@ -152,6 +153,11 @@ while running:
             start_time = pygame.time.get_ticks()
             distance = ((x1 - cat.rect.x) ** 2 + (y1 - cat.rect.y) ** 2) ** (1 / 2) # расстояние которое нужно пройти
             speed = cards.cell_size[0]//(FPS//2) # скорость пережвижения
+            if x1 - cat.rect.x>-x1 + cat.rect.x:
+                dir='right'
+            else:
+                dir='left'
+
             '''if event.key == pygame.K_LEFT:
                 cat.rect.x -= STEP
             if event.key == pygame.K_RIGHT:
@@ -167,6 +173,8 @@ while running:
     cat.rect.y = cat.rect.y % HEIGHT'''
     if is_move:
         is_move=cat.move(x1, y1,speed)
+    else:
+        dir='idle'
 
 
 
@@ -175,7 +183,7 @@ while running:
     '''tiles_group.draw(screen)
     player_group.draw(screen)'''
     cards.render(screen)
-    cat.update('right')
+    cat.update(dir)
     players_group.draw(screen)
     pygame.display.flip()
 

@@ -30,7 +30,9 @@ class Player(pygame.sprite.Sprite):
         self.size=size
         self.image = pygame.transform.scale(load_image(img_path),size)
         self.rect = self.image.get_rect().move(pos_x, pos_y)
-        self.frames={'right':[pygame.transform.scale(load_image(os.path.join('movies/cat/right/',file)),size) for file in os.listdir('movies/cat/right') ]}
+        self.frames={'right':[pygame.transform.scale(load_image(os.path.join('movies/cat/right/',file)),size) for file in os.listdir('movies/cat/right') ],
+                     'left':[pygame.transform.scale(load_image(os.path.join('movies/cat/left/',file)),size) for file in os.listdir('movies/cat/left') ],
+                     'idle':[pygame.transform.scale(load_image(os.path.join('movies/cat/idle/',file)),size) for file in os.listdir('movies/cat/idle') ]}
         self.cur_frame=0
 
 
@@ -46,15 +48,14 @@ class Player(pygame.sprite.Sprite):
         print('x,y',self.rect.x,self.rect.y)
      #   time=pygame.time.get_ticks()-star_time # время прошедшее с начала дживения
       #  print(time)
-        if self.rect.x !=x or self.rect.y!=y :
-            distance = ((x - self.rect.x) **2 + (y - self.rect.y) **2)**(1/2) # считаем дистанцию (длину от точки А до точки Б).формула длины вектора
-            if (distance>speed): # этим условием убираем дергание во время конечной позиции спрайта
-                print('+x',speed*(x - self.rect.x) /(distance))
-                self.rect.x += int(speed*(x - self.rect.x) /distance) # идем по иксу с помощью вектора нормали
-            if (distance>speed):
-                print('+y', speed * (y - self.rect.y) / (distance))
-                self.rect.y += int(speed*(y - self.rect.y) /distance) # идем по игреку так же
-               # print(self.rect.x, self.rect.y)
+        distance = ((x - self.rect.x) ** 2 + (y - self.rect.y) ** 2) ** (
+                    1 / 2)  # считаем дистанцию (длину от точки А до точки Б).формула длины вектора
+        if (distance>speed):
+            print('+x',speed*(x - self.rect.x) /(distance))
+            self.rect.x += int(speed*(x - self.rect.x) /distance) # идем по иксу с помощью вектора нормали
+            print('+y', speed * (y - self.rect.y) / (distance))
+            self.rect.y += int(speed*(y - self.rect.y) /distance) # идем по игреку так же
+           # print(self.rect.x, self.rect.y)
             return True
         else:
             return False
