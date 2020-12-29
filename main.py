@@ -44,39 +44,6 @@ def load_image(name, size=None, color_key=None):
 
     return image
 
-
-'''
-def load_level(filename):
-    filename = "data/" + filename
-    # читаем уровень, убирая символы перевода строки
-    with open(filename, 'r') as mapFile:
-        level_map = [line.strip() for line in mapFile]
-    repeat_map = [line.replace('@', '.') for line in level_map]
-    level_map += repeat_map
-    # и подсчитываем максимальную длину
-    max_width = WIDTH // tile_width + 1
-    # print(list(map(lambda x: x.ljust(max_width, '.'), level_map)))
-    # дополняем каждую строку пустыми клетками ('.')
-    return list(map(lambda x: x.ljust(max_width, '.'), level_map))
-
-
-def generate_level(level):
-    new_player, x, y = None, None, None
-    for y in range(len(level)):
-        for x in range(len(level[y])):
-            if level[y][x] == '.':
-                Tile('empty', x, y)
-            elif level[y][x] == '#':
-                Tile('wall', x, y).add(box_group)
-            elif level[y][x] == '@':
-                Tile('empty', x, y)
-                new_player = Player(x, y)
-    # вернем игрока, а также размер поля в клетках
-    return new_player, x, y
-
-'''
-
-
 def terminate():
     pygame.quit()
     sys.exit()
@@ -110,28 +77,6 @@ def start_screen():
         pygame.display.flip()
         clock.tick(FPS)
 
-
-'''
-tile_images = {'wall': load_image('box.png',(80,80)), 'empty': load_image('grass.png',(80,80))}
-player_image = load_image('mario.png', (50, 70))
-
-tile_width = tile_height = 80
-
-
-class Tile(pygame.sprite.Sprite):
-    def __init__(self, tile_type, pos_x, pos_y):
-        super().__init__(tiles_group, all_sprites)
-        self.image = tile_images[tile_type]
-        self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)
-
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_y):
-        super().__init__(player_group, all_sprites)
-        self.image = player_image
-        self.rect = self.image.get_rect().move(tile_width * pos_x + 15, tile_height * pos_y + 5)
-'''
-
 start_screen()
 hardness = (6, 4)
 print('start')
@@ -146,38 +91,44 @@ players_group.add(cat)
 players_group.add(dog)
 dir = 'idle'
 is_move = False
-count=-1
+count = -1
+card_checked = False
+card1 = None
+card2 = None
 while running:
     screen.fill((0, 0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN and not is_move:
-            count+=1
-            print(count)
-            x, y = event.pos
-            x1 = ((x - cards.left) // cards.cell_size[0] * cards.cell_size[0]) - 1 + cards.cell_size[0] // 4
-            y1 = ((y - cards.top) // cards.cell_size[1] * cards.cell_size[1]) - 1 + cards.cell_size[0] // 4
-           # print(x1, y1)
-            is_move = True
-            start_time = pygame.time.get_ticks()
-            speed = cards.cell_size[0] // (FPS // 2)  # скорость пережвижения
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if not is_move:
+                cards.get_click(event.pos)
+                card_checked = True
+                count += 1
+                print(event.type)
+                x, y = event.pos
+                x1 = ((x - cards.left) // cards.cell_size[0] * cards.cell_size[0]) - 1 + cards.cell_size[0] // 4
+                y1 = ((y - cards.top) // cards.cell_size[1] * cards.cell_size[1]) - 1 + cards.cell_size[0] // 4
+                # print(x1, y1)
+                is_move = True
+                start_time = pygame.time.get_ticks()
+                speed = cards.cell_size[0] // (FPS // 2)  # скорость пережвижения
+        else:
+            card_checked = False
+    if card_checked:
+        card_checked = False
+        current_card = ((x - cards.left) // cards.cell_size[0], (y - cards.top) // cards.cell_size[1])
+        if count % 2 == 0:
+            print(card1, card2, current_card)
+            if card1 and not cards.check(card1, card2):
+                cards.close(card1, card2)
 
+            card1 = current_card
+        else:
+            card2 = current_card
+            print(cards.check(card1, card2))
 
-            '''if event.key == pygame.K_LEFT:
-                cat.rect.x -= STEP
-            if event.key == pygame.K_RIGHT:
-                cat.rect.x += STEP
-            if event.key == pygame.K_UP:
-                cat.rect.y -= STEP
-            if event.key == pygame.K_DOWN:
-                cat.rect.y += STEP
-            if pygame.sprite.spritecollideany(player, box_group):
-                player.rect.x=x
-                player.rect.y=y
-    cat.rect.x = cat.rect.x % WIDTH
-    cat.rect.y = cat.rect.y % HEIGHT'''
-    if count%4>1:
+    if count % 4 > 1:
         current_player=cat
     else:
         current_player=dog
