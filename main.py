@@ -145,7 +145,13 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             x,y=event.pos
+            x1=((x-cards.left)//cards.cell_size[0]*cards.cell_size[0])-1+cards.cell_size[0]//4
+            y1=((y-cards.top)//cards.cell_size[1]*cards.cell_size[1])-1+cards.cell_size[0]//4
+            print(x1,y1)
             is_move=True
+            start_time = pygame.time.get_ticks()
+            distance = ((x1 - cat.rect.x) ** 2 + (y1 - cat.rect.y) ** 2) ** (1 / 2) # расстояние которое нужно пройти
+            speed = cards.cell_size[0]//(FPS//2) # скорость пережвижения
             '''if event.key == pygame.K_LEFT:
                 cat.rect.x -= STEP
             if event.key == pygame.K_RIGHT:
@@ -160,7 +166,7 @@ while running:
     cat.rect.x = cat.rect.x % WIDTH
     cat.rect.y = cat.rect.y % HEIGHT'''
     if is_move:
-        is_move=cat.move(x, y)
+        is_move=cat.move(x1, y1,speed)
 
 
 
