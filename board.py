@@ -1,7 +1,6 @@
 import pygame
 import os
-from numpy.random import choice, shuffle
-from numpy import repeat
+from random import shuffle
 
 COLUMNS = 5
 ROWS = 5
@@ -36,10 +35,12 @@ class Board:
         self.top = 30
         self.cell_size = ((width - 60) // 6, (height - 60) // 4)
         print(self.cell_size)
-        self.frames = self.new_board(dir)
-        self.cards = choice(self.frames, size=self.height * self.width // 2, replace=False)
-        self.cards = repeat(self.cards, 2)
+        frames = self.new_board(dir)
+        print(frames)
+        self.cards = [frames.pop() for i in range(self.height * self.width // 2)]
+        self.cards += self.cards
         shuffle(self.cards)
+
 
     def new_board(self, dir):
         frames = []
@@ -49,8 +50,8 @@ class Board:
         for j in range(ROWS):
             for i in range(COLUMNS):
                 frame_location = (img_rect.w * i, img_rect.h * j)
-                frames.append(img.subsurface(pygame.Rect(
-                    frame_location, img_rect.size)))
+                frames.append((img.subsurface(pygame.Rect(
+                    frame_location, img_rect.size)), j * COLUMNS + i))
         return frames
 
     def set_view(self, left, top, cell_size):
@@ -62,7 +63,7 @@ class Board:
 
         for i in range(self.height):
             for j in range(self.width):
-                img = self.cards[i * self.width + j]
+                img = self.cards[i * self.width + j][0]
                 img = pygame.transform.scale(img, self.cell_size)
                 screen.blit(img, (self.left + self.cell_size[0] * j, self.top + self.cell_size[1] * i))
 
