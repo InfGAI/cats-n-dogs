@@ -105,7 +105,6 @@ while running:
                 cards.get_click(event.pos)
                 card_checked = True
                 count += 1
-                print(event.type)
                 x, y = event.pos
                 x1 = ((x - cards.left) // cards.cell_size[0] * cards.cell_size[0]) - 1 + cards.cell_size[0] // 4
                 y1 = ((y - cards.top) // cards.cell_size[1] * cards.cell_size[1]) - 1 + cards.cell_size[0] // 4
@@ -116,22 +115,25 @@ while running:
         else:
             card_checked = False
     if card_checked:
+        print('count', count)
         card_checked = False
-        current_card = ((x - cards.left) // cards.cell_size[0], (y - cards.top) // cards.cell_size[1])
-        if count % 2 == 0:
-            print(card1, card2, current_card)
-            if card1 and not cards.check(card1, card2):
+        current_card = ((y - cards.top) // cards.cell_size[1], (x - cards.left) // cards.cell_size[0])
+
+        if count % 2 == 0 and card2:
+            print(cards.check(card1, card2))
+            if not cards.check(card1, card2):
                 cards.close(card1, card2)
 
+        if count % 2 == 0:
             card1 = current_card
         else:
             card2 = current_card
-            print(cards.check(card1, card2))
+        print(card1, card2, current_card)
 
     if count % 4 > 1:
-        current_player=cat
+        current_player = cat
     else:
-        current_player=dog
+        current_player = dog
 
     if is_move:
         is_move = current_player.move(x1, y1, speed)

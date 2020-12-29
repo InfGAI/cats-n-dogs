@@ -30,16 +30,21 @@ def load_image(name, size=None, color_key=None):
 class Board:
     def __init__(self, width, height, dir, hardness):
         self.width, self.height = hardness
-        self.board = [[0] * self.width for _ in range(self.height)]
+
         self.left = 30
         self.top = 30
         self.cell_size = ((width - 60) // 6, (height - 60) // 4)
-        print(self.cell_size)
+
         frames = self.new_board(dir)
-        print(frames)
+
         self.cards = [frames.pop() for i in range(self.height * self.width // 2)]
         self.cards += self.cards
         shuffle(self.cards)
+        self.board = []
+        for i in range(self.height):
+            self.board.append(list(map(lambda x: [x[1], 0], self.cards[i * self.width:i * self.width + self.width])))
+        print(self.board)
+
         self.back = load_image('back.png', self.cell_size)
 
     def new_board(self, dir):
@@ -63,7 +68,7 @@ class Board:
 
         for i in range(self.height):
             for j in range(self.width):
-                if self.board[i][j]:
+                if self.board[i][j][1]:
                     img = self.cards[i * self.width + j][0]
                     img = pygame.transform.scale(img, self.cell_size)
                 else:
@@ -79,19 +84,21 @@ class Board:
             y = (pos[1] - self.top) // self.cell_size[1]
         else:
             return None
-        return x, y
+        print('xy ', y, x)
+        return y, x
 
     def on_click(self, cell_coords):
-        print(cell_coords)
-        self.board[cell_coords[1]][cell_coords[0]] = 1
-        print('board', self.board)
+
+        self.board[cell_coords[0]][cell_coords[1]][1] = 1
+        print(self.board)
 
     def get_click(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
         self.on_click(cell)
 
     def check(self, card1, card2):
-        if card1[1] == card2[1]:
+        print(self.board[card1[0]][card1[1]][0], self.board[card2[0]][card2[1]][0])
+        if self.board[card1[0]][card1[1]][0] == self.board[card2[0]][card2[1]][0]:
             return True
         else:
             return False
@@ -100,4 +107,5 @@ class Board:
 
         for i in args:
             x, y = i
-            self.board[y][x] = 0
+            print('close ', i)
+            self.board[x][y][1] = 0
