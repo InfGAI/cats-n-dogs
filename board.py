@@ -49,9 +49,13 @@ class Board:
                                img.get_height() // ROWS)
         for j in range(ROWS):
             for i in range(COLUMNS):
+
                 frame_location = (img_rect.w * i, img_rect.h * j)
-                frames.append((img.subsurface(pygame.Rect(
-                    frame_location, img_rect.size)), j * COLUMNS + i))
+                if self.board[i][j]:
+                    frames.append((img.subsurface(pygame.Rect(
+                        frame_location, img_rect.size)), j * COLUMNS + i))
+                else:
+                    frames.append(load_image('back.png', self.cell_size))
         return frames
 
     def set_view(self, left, top, cell_size):
@@ -63,8 +67,12 @@ class Board:
 
         for i in range(self.height):
             for j in range(self.width):
-                img = self.cards[i * self.width + j][0]
-                img = pygame.transform.scale(img, self.cell_size)
+                if self.board[i][j]:
+                    img = self.cards[i * self.width + j][0]
+                    img = pygame.transform.scale(img, self.cell_size)
+                else:
+                    img = self.cards[i * self.width + j]
+
                 screen.blit(img, (self.left + self.cell_size[0] * j, self.top + self.cell_size[1] * i))
 
     def get_cell(self, pos):
