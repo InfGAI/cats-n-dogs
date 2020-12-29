@@ -55,17 +55,14 @@ class Player(pygame.sprite.Sprite):
             self.dir = 'right'
         else:
             self.dir = 'left'
-        print(speed)
-        print(x, y)
-        print('x,y', self.rect.x, self.rect.y)
         #   time=pygame.time.get_ticks()-star_time # время прошедшее с начала дживения
         #  print(time)
         distance = ((x - self.rect.x) ** 2 + (y - self.rect.y) ** 2) ** ( 1 / 2)
         # считаем дистанцию (длину от точки А до точки Б).формула длины вектора
         if distance > speed:
-            print('+x', speed * (x - self.rect.x) / distance)
+            #print('+x', speed * (x - self.rect.x) / distance)
             self.rect.x += int(speed * (x - self.rect.x) / distance)  # идем по иксу с помощью вектора нормали
-            print('+y', speed * (y - self.rect.y) / distance)
+            #print('+y', speed * (y - self.rect.y) / distance)
             self.rect.y += int(speed * (y - self.rect.y) / distance)  # идем по игреку так же
             # print(self.rect.x, self.rect.y)
             return True
