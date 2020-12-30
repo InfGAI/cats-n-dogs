@@ -1,40 +1,16 @@
 import pygame
 import os
 import sys
+from functions import load_image, terminate
 
 
-def load_image(name, size=None, color_key=None):
-    fullname = os.path.join('data', name)
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error as message:
-        print('Cannot load image:', name)
-        raise SystemExit(message)
-    if size is not None:
-        image = pygame.transform.scale(image, size)
-    if color_key is not None:
-        if color_key == -1:
-            color_key = image.get_at((0, 0))
-        image.set_colorkey(color_key)
-        image = image.convert()
-    else:
-        image = image.convert_alpha()
-
-    return image
-
-
-def terminate():
-    pygame.quit()
-    sys.exit()
-
-
-def start_screen(screen):
+def start_screen(screen, size, clock, FPS):
     intro_text = ["ЗАСТАВКА", "",
                   "Правила игры",
                   "Если в правилах несколько строк,",
                   "приходится выводить их построчно"]
 
-    fon = load_image('grass.png', (WIDTH, HEIGHT))
+    fon = load_image('grass.png', size, dir='data')
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 50
@@ -57,10 +33,11 @@ def start_screen(screen):
         clock.tick(FPS)
 
 
-def end_screen(cat, dog):
-    global FPS
+def end_screen(screen, size, clock, FPS, speed, cat, dog):
+    WIDTH, HEIGHT = size
+
     line = f'{cat.name}     {cat.score}' + ' ' * 60 + f'{dog.name}     {dog.score}'
-    fon = load_image('winner.jpg', (WIDTH, HEIGHT))
+    fon = load_image('winner.jpg', (WIDTH, HEIGHT), dir='data')
     cat.dir = 'idle'
     dog.dir = 'idle'
     font = pygame.font.Font(None, 50)
