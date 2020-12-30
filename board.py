@@ -1,30 +1,10 @@
 import pygame
 import os
 from random import shuffle
+from functions import load_image
 
 COLUMNS = 5
 ROWS = 5
-
-
-def load_image(name, size=None, color_key=None):
-    fullname = os.path.join('data', name)
-
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error as message:
-        print('Cannot load image:', name)
-        raise SystemExit(message)
-    if size is not None:
-        image = pygame.transform.scale(image, size)
-    if color_key is not None:
-        if color_key == -1:
-            color_key = image.get_at((0, 0))
-        image.set_colorkey(color_key)
-        image = image.convert()
-    else:
-        image = image.convert_alpha()
-
-    return image
 
 
 class Board:
@@ -45,11 +25,11 @@ class Board:
             self.board.append(list(map(lambda x: [x[1], 0], self.cards[i * self.width:i * self.width + self.width])))
         print(self.board)
 
-        self.back = load_image('back.png', self.cell_size)
+        self.back = load_image('back.png', self.cell_size, dir='data')
 
-    def new_board(self, dir):
+    def new_board(self, image):
         frames = []
-        img = load_image(dir)
+        img = load_image(image, dir='data')
         img_rect = pygame.Rect(0, 0, img.get_width() // COLUMNS,
                                img.get_height() // ROWS)
         for j in range(ROWS):
