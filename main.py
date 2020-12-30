@@ -80,25 +80,33 @@ def start_screen():
 def end_screen(cat, dog):
     line = f'{cat.name}     {cat.score}' + ' ' * 60 + f'{dog.name}     {dog.score}'
     fon = load_image('winner.jpg', (WIDTH, HEIGHT))
-    screen.blit(fon, (0, 0))
+    cat.dir = 'idle'
+    dog.dir = 'idle'
     font = pygame.font.Font(None, 50)
     text_coord = 50
 
     string_rendered = font.render(line, 1, pygame.Color('red'))
     line_rect = string_rendered.get_rect()
-    screen.blit(string_rendered, (10, 20))
+
     if cat.score > dog.score:
         winner = cat
     while True:
+        screen.blit(fon, (0, 0))
+        screen.blit(string_rendered, (10, 20))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 return  # начинаем игру
+        cat.update()
+        dog.update()
+        screen.blit(cat.image, (WIDTH // 8, HEIGHT // 4))
+        screen.blit(dog.image, (WIDTH * 3 // 4, HEIGHT // 4))
         pygame.display.flip()
         clock.tick(FPS)
 
 def score(cat, dog):
+
     line = f'Кошечка {cat.score}         Собачка {dog.score}'
     font = pygame.font.Font(None, 30)
     text_coord = 30
@@ -106,7 +114,7 @@ def score(cat, dog):
 
 
 start_screen()
-hardness = (4, 2)
+hardness = (2, 2)
 print('start')
 running = True
 players_group = pygame.sprite.Group()
