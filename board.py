@@ -94,7 +94,8 @@ class Board:
 
     def get_click(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
-        self.on_click(cell)
+        if cell:
+            self.on_click(cell)
 
     def check(self, card1, card2):
         print(self.board[card1[0]][card1[1]][0], self.board[card2[0]][card2[1]][0])
