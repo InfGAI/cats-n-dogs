@@ -25,7 +25,7 @@ def score(cat, dog):
 
 
 start_screen(screen, (WIDTH, HEIGHT), clock, FPS)
-hardness = (2, 4)
+hardness = (4, 2)
 running = True
 players_group = pygame.sprite.Group()
 cards = board.Board(WIDTH, HEIGHT, 'cards.jpg', hardness)
@@ -43,6 +43,8 @@ count = -1
 card1 = None
 card2 = None
 winner = None
+current_player = dog
+past_player = cat
 while running:
     screen.fill((0, 0, 0))
     screen.blit(score(cat, dog), (50, 10))
@@ -56,30 +58,32 @@ while running:
                 x, y = event.pos
                 x1 = (((x - cards.left) // cards.cell_size[0]) * cards.cell_size[0]) + cards.left
                 y1 = (((y - cards.top) // cards.cell_size[1]) * cards.cell_size[1]) + cards.top
-                print(x, y, cards.left, cards.right)
                 if cards.left < x < cards.right and cards.top < y < cards.bottom:
                     is_move = True
                     count = (count + 1) % 4
-                    print('count', count)
                     card_checked = True
+                    if count % 4 > 1:
+                        current_player = cat
+                        past_player = dog
+                    else:
+                        current_player = dog
+                        past_player = cat
+                    print(current_player.name, count)
 
                 start_time = pygame.time.get_ticks()
-
-    if count % 4 > 1:
-        current_player = cat
-        past_player = dog
-    else:
-        current_player = dog
-        past_player = cat
-
     if is_move:
         is_move = current_player.move(x1, y1, speed)
+    else:
+        current_player.dir = 'idle'
+
     if card_checked:
         current_card = ((y - cards.top) // cards.cell_size[1], (x - cards.left) // cards.cell_size[0])
         if count % 2 == 1:
             if cards.check(card1, current_card):
                 current_player.score += 1
+                count -= 2
             card2 = current_card
+
         else:
             if card2:
                 if not cards.check(card1, card2):
@@ -89,8 +93,6 @@ while running:
             card1 = current_card
             card2 = None
 
-    else:
-        current_player.dir = 'idle'
 
     '''tiles_group.draw(screen)
     player_group.draw(screen)'''
