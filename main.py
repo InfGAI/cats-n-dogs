@@ -24,8 +24,8 @@ def score(cat, dog):
     return font.render(line, 1, pygame.Color('white'))
 
 
-start_screen(screen, (WIDTH, HEIGHT), clock, FPS)
-hardness = (2, 4)
+hardness = start_screen(screen, (WIDTH, HEIGHT), clock, FPS)
+
 running = True
 players_group = pygame.sprite.Group()
 cards = board.Board(WIDTH, HEIGHT, 'cards.jpg', hardness)
@@ -92,10 +92,6 @@ while running:
 
             card1 = current_card
             card2 = None
-
-
-    '''tiles_group.draw(screen)
-    player_group.draw(screen)'''
 
     cards.render(screen)
     players_group.update()
