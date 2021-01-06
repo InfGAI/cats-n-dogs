@@ -45,22 +45,21 @@ def end_screen(screen, size, clock, FPS, speed, cat, dog):
     loser_is_move = True
     string_rendered = font.render(line, 1, pygame.Color('red'))
     line_rect = string_rendered.get_rect()
-    cat.rect.x, cat.rect.y = (WIDTH // 8, HEIGHT // 4)
-    dog.rect.x, dog.rect.y = (WIDTH * 3 // 4, HEIGHT // 4)
+    cat.rect.x, cat.rect.y = (cat.size[0], HEIGHT // 4)
+    dog.rect.x, dog.rect.y = (WIDTH - dog.size[0] * 3 // 2, HEIGHT // 4)
+    no_winner = False
     if cat.score > dog.score:
         winner = cat
         loser = dog
-    else:
+        finish = WIDTH
+    elif cat.score < dog.score:
         winner = dog
         loser = cat
-    is_move = False
-    count_dead = 0
-
-    if WIDTH // 2 - loser.rect.x > 0:
-        step = -WIDTH // 8
+        finish = 0
     else:
-        step = WIDTH // 8
-    dist_x = loser.rect.x + step
+        no_winner = True
+    is_move = False
+
     stop = False
     while True:
         screen.blit(fon, (0, 0))
@@ -69,24 +68,22 @@ def end_screen(screen, size, clock, FPS, speed, cat, dog):
             if event.type == pygame.QUIT:
                 terminate()
             elif (event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN) and not is_move and not stop:
-                winner.dir = 'run'
-                is_move = True
-                distance = ((loser.rect.x - winner.rect.x) ** 2 + (loser.rect.y - winner.rect.y) ** 2) ** (1 / 2)
-
-        if is_move:
-
-            if ((loser.rect.x - winner.rect.x) ** 2 + (loser.rect.y - winner.rect.y) ** 2) ** (1 / 2) * 2 > distance:
-                is_move = winner.move(loser.rect.x, loser.rect.y, speed // 2, slide='run')
-            else:
-                is_move = winner.move(loser.rect.x, loser.rect.y, speed // 2, slide='slide')
-        elif winner.dir == 'slide':
-            if loser_is_move:
-                loser_is_move = loser.move(dist_x, loser.rect.y, speed // 2, slide='dead')
+                if not no_winner:
+                    winner.dir = 'run'
+                    is_move = True
+                    distance = abs(loser.rect.x - winner.rect.x)
+        if is_move and not no_winner:
+            if not pygame.sprite.collide_rect_ratio(0.5)(loser, winner):
+                if abs(loser.rect.x - winner.rect.x) * 2 > distance:
+                    is_move = winner.move(loser.rect.x, loser.rect.y, speed // 2, slide='run')
+                else:
+                    is_move = winner.move(loser.rect.x, loser.rect.y, speed // 2, slide='slide')
+                    # loser_is_move = loser.move(finish, loser.rect.y, speed // 4, slide='dead')
             else:
                 winner.dir = 'jump'
                 FPS = 5
                 loser.dir = 'hurt'
-                stop = True
+
         cat.update()
         dog.update()
         screen.blit(cat.image, cat.rect)

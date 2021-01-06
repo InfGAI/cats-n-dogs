@@ -25,7 +25,7 @@ def score(cat, dog):
 
 
 start_screen(screen, (WIDTH, HEIGHT), clock, FPS)
-hardness = (4, 2)
+hardness = (2, 4)
 running = True
 players_group = pygame.sprite.Group()
 cards = board.Board(WIDTH, HEIGHT, 'cards.jpg', hardness)
