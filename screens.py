@@ -75,7 +75,6 @@ def end_screen(screen, size, clock, FPS, speed, cat, dog):
 
         if is_move:
 
-            # print(((loser.rect.x - winner.rect.x) ** 2 + (loser.rect.y - winner.rect.y) ** 2) ** ( 1 / 2)*2,distance)
             if ((loser.rect.x - winner.rect.x) ** 2 + (loser.rect.y - winner.rect.y) ** 2) ** (1 / 2) * 2 > distance:
                 is_move = winner.move(loser.rect.x, loser.rect.y, speed // 2, slide='run')
             else:
@@ -88,8 +87,6 @@ def end_screen(screen, size, clock, FPS, speed, cat, dog):
                 FPS = 5
                 loser.dir = 'hurt'
                 stop = True
-
-        print(loser.dir)
         cat.update()
         dog.update()
         screen.blit(cat.image, cat.rect)

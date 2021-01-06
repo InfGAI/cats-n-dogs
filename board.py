@@ -7,20 +7,21 @@ COLUMNS = 5
 ROWS = 5
 
 
-class Board:
+class Board():
     def __init__(self, width, height, dir, hardness):
         self.width, self.height = hardness
-
-        self.left = 30
-        self.top = 60
-        self.cell_size = ((width - 60) // 6, (height - 60) // 4)
-
+        self.left = width // 10
+        self.top = height // 10
+        self.cell_size = ((width - 2 * self.left) // self.width, (height - 2 * self.top) // self.height)
+        self.right = self.left + self.cell_size[0] * self.width
+        self.bottom = self.top + self.cell_size[1] * self.height
         frames = self.new_board(dir)
 
         self.cards = [frames.pop() for i in range(self.height * self.width // 2)]
         self.cards += self.cards
         shuffle(self.cards)
-        self.board = []
+        self.board = []  # логическая доска из кортежей, где на 1 месье номер карточки, а на втором метка 1 или 0 открыта/закрыта
+        self.opened = set()  # множество вскрытых карточек
         for i in range(self.height):
             self.board.append(list(map(lambda x: [x[1], 0], self.cards[i * self.width:i * self.width + self.width])))
         print(self.board)
@@ -64,13 +65,11 @@ class Board:
             y = (pos[1] - self.top) // self.cell_size[1]
         else:
             return None
-        print('xy ', y, x)
         return y, x
 
     def on_click(self, cell_coords):
-
         self.board[cell_coords[0]][cell_coords[1]][1] = 1
-        print(self.board)
+
 
     def get_click(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
@@ -78,15 +77,15 @@ class Board:
             self.on_click(cell)
 
     def check(self, card1, card2):
-        print(self.board[card1[0]][card1[1]][0], self.board[card2[0]][card2[1]][0])
         if self.board[card1[0]][card1[1]][0] == self.board[card2[0]][card2[1]][0]:
+            self.opened.add(self.board[card1[0]][card1[1]][0])
+            print('opened ', self.opened)
             return True
         else:
             return False
 
     def close(self, *args):
-
         for i in args:
             x, y = i
-            print('close ', i)
-            self.board[x][y][1] = 0
+            if self.board[x][y][0] not in self.opened:
+                self.board[x][y][1] = 0

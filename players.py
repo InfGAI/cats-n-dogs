@@ -14,8 +14,9 @@ class Player(pygame.sprite.Sprite):
         player_dir = os.path.join('movies', player_dir)
         img_path = os.path.join(player_dir, 'idle', 'Idle (1).png')
         self.name = name
-        self.size = size
+
         self.image = load_image(img_path, size=size)
+        self.size = self.image.get_rect().size
         self.rect = self.image.get_rect().move(pos_x, pos_y)
         self.frames = {
             'right': [load_image(os.path.join(player_dir, 'right', file), size) for file in
@@ -51,6 +52,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.frames[self.dir][self.cur_frame]
 
     def move(self, x, y, speed, slide=None):
+
         if slide is None:
             if x - self.rect.x > -x + self.rect.x:
                 self.dir = 'right'
@@ -58,17 +60,11 @@ class Player(pygame.sprite.Sprite):
                 self.dir = 'left'
         else:
             self.dir = slide
-
-        #   time=pygame.time.get_ticks()-star_time # время прошедшее с начала дживения
-        #  print(time)
         distance = ((x - self.rect.x) ** 2 + (y - self.rect.y) ** 2) ** (1 / 2)
         # считаем дистанцию (длину от точки А до точки Б).формула длины вектора
         if distance > speed:
-            # print('+x', speed * (x - self.rect.x) / distance)
             self.rect.x += int(speed * (x - self.rect.x) / distance)  # идем по иксу с помощью вектора нормали
-            # print('+y', speed * (y - self.rect.y) / distance)
             self.rect.y += int(speed * (y - self.rect.y) / distance)  # идем по игреку так же
-            # print(self.rect.x, self.rect.y)
             return True
         else:
             return False
