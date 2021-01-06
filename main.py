@@ -61,9 +61,9 @@ while running:
                     is_move = True
                     count = (count + 1) % 4
                     print('count', count)
-                start_time = pygame.time.get_ticks()
-                if count % 2 == 0:
                     card_checked = True
+
+                start_time = pygame.time.get_ticks()
 
     if count % 4 > 1:
         current_player = cat
@@ -74,18 +74,21 @@ while running:
 
     if is_move:
         is_move = current_player.move(x1, y1, speed)
+    if card_checked:
         current_card = ((y - cards.top) // cards.cell_size[1], (x - cards.left) // cards.cell_size[0])
-        if card_checked:
+        if count % 2 == 1:
+            if cards.check(card1, current_card):
+                current_player.score += 1
+            card2 = current_card
+        else:
             if card2:
                 if not cards.check(card1, card2):
-                    cards.close(card1, card2)
-                else:
-                    past_player.score += 1
+                    cards.close(card1)
+                    cards.close(card2)
 
-        if count % 2 == 0:
             card1 = current_card
-        else:
-            card2 = current_card
+            card2 = None
+
     else:
         current_player.dir = 'idle'
 
