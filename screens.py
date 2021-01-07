@@ -3,22 +3,30 @@ import os
 import sys
 from functions import load_image, terminate
 class Buttons(pygame.sprite.Sprite):
-    def __init__(self, btn, txt, pos_x, pos_y, name=None):
+    def __init__(self, btn, txt, pos_x, pos_y, size=None, proc=None, name=None):
         super().__init__()
         self.txt = load_image(txt)
         self.btn = load_image(btn, self.txt.get_rect().size)
         self.size = self.txt.get_rect().size
-        self.rect = self.btn.get_rect().move(pos_x, pos_y)
+
+        if size:
+            koeff = self.size[0] / self.size[1]
+            self.size = (int(size[1] * proc // 100 * koeff), size[1] * proc // 100)
+
+        self.rect = pygame.Rect((pos_x, pos_y), self.size)
+        self.resize(self.size)
         self.name = name
+        print(self.name, self.rect)
 
     def update(self, screen):
         screen.blit(self.btn, self.rect)
         screen.blit(self.txt, self.rect)
+        print(self.rect)
 
-    def resize(self, *size):
+    def resize(self, size):
         self.btn = pygame.transform.scale(self.btn, size)
         self.txt = pygame.transform.scale(self.txt, size)
-        self.rect.width, self.rect.height = size
+
 
 
 def start_screen(screen, size, clock, FPS):
@@ -27,18 +35,19 @@ def start_screen(screen, size, clock, FPS):
     game_hardness = {'easy': (4, 4), 'normal': (5, 6), 'hard': (6, 8)}
     fon = load_image('bg.png', size, dir='data')
     screen.blit(fon, (0, 0))
-    play = Buttons('data/Button08.png', 'data/Text/TxtPlay.png', 0, 0)
+    play = Buttons('data/Button08.png', 'data/Text/TxtPlay.png', 0, 0, size=size, proc=15)
     play.rect.center = (size[0] // 2, size[1] // 2)
-    play.resize(150, 80)
-    options = Buttons('data/Button09.png', 'data/Text/TxtOptions.png', 10, size[1] * 7 // 8)
-    easy = Buttons('data/Button08.png', 'data/Text/easy.png', 10, size[1] * 6 // 8, name='easy')
-    easy.resize(100, 30)
-    normal = Buttons('data/Button09.png', 'data/Text/normal.png', easy.rect.right + 30, easy.rect.bottom + 5,
+    options = Buttons('data/Button09.png', 'data/Text/TxtOptions.png', 10, size[1] * 7 // 8, size=size, proc=10)
+    easy = Buttons('data/Button08.png', 'data/Text/easy.png', options.rect.left,
+                   options.rect.top - 2 * options.rect.height, name='easy', size=size, proc=7)
+
+    normal = Buttons('data/Button09.png', 'data/Text/normal.png', easy.rect.right + 30, easy.rect.bottom + 5, size=size,
+                     proc=7,
                      name='normal')
-    normal.resize(100, 30)
-    hard = Buttons('data/Button10.png', 'data/Text/hard.png', normal.rect.right + 20, normal.rect.bottom + 5,
+
+    hard = Buttons('data/Button10.png', 'data/Text/hard.png', normal.rect.right + 20, normal.rect.bottom + 5, size=size,
+                   proc=7,
                    name='hard')
-    hard.resize(100, 30)
 
     font = pygame.font.Font(None, 30)
     text_coord = 50
@@ -66,9 +75,7 @@ def start_screen(screen, size, clock, FPS):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
                 mouse = Buttons('data/Button10.png', 'data/Text/hard.png', x, y)
-                mouse.resize(1, 1)
-                print(mouse.rect)
-
+                mouse.resize((1, 1))
                 if play.rect.left < x < play.rect.right and play.rect.top < y < play.rect.bottom:
                     return hardness  # начинаем игру по кнопке
                 elif options.rect.left < x < options.rect.right and options.rect.top < y < options.rect.bottom:
@@ -79,10 +86,7 @@ def start_screen(screen, size, clock, FPS):
                     group_choices.add(normal)
                     hard.update(screen)
                     group_choices.add(hard)
-                    print(group_choices)
-                    print(pygame.sprite.spritecollideany(mouse, group_choices))
                 elif choice and pygame.sprite.spritecollideany(mouse, group_choices):
-                    print(pygame.sprite.spritecollideany(mouse, group_choices))
                     hardness = game_hardness[pygame.sprite.spritecollideany(mouse, group_choices).name]
                     return hardness
         pygame.display.flip()
