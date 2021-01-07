@@ -2,17 +2,19 @@ import pygame
 import os
 import sys
 from functions import load_image, terminate
+
+
 class Buttons(pygame.sprite.Sprite):
     def __init__(self, btn, txt, pos_x, pos_y, size=None, proc=None, name=None):
         super().__init__()
         self.txt = load_image(txt)
-        self.btn = load_image(btn, self.txt.get_rect().size)
         self.size = self.txt.get_rect().size
-
         if size:
             koeff = self.size[0] / self.size[1]
             self.size = (int(size[1] * proc // 100 * koeff), size[1] * proc // 100)
-
+        self.btn = load_image(btn, self.size)
+        self.normal_btn = self.btn
+        self.check_btn = load_image('data/Button01.png', self.size)
         self.rect = pygame.Rect((pos_x, pos_y), self.size)
         self.resize(self.size)
         self.name = name
@@ -21,12 +23,19 @@ class Buttons(pygame.sprite.Sprite):
     def update(self, screen):
         screen.blit(self.btn, self.rect)
         screen.blit(self.txt, self.rect)
-        print(self.rect)
+        self.screen = screen
 
     def resize(self, size):
         self.btn = pygame.transform.scale(self.btn, size)
         self.txt = pygame.transform.scale(self.txt, size)
 
+    def choose_button(self):
+        self.btn = self.check_btn
+        self.update(self.screen)
+
+    def unchoose_button(self):
+        self.btn = self.normal_btn
+        self.update(self.screen)
 
 
 def start_screen(screen, size, clock, FPS):
@@ -87,8 +96,14 @@ def start_screen(screen, size, clock, FPS):
                     hard.update(screen)
                     group_choices.add(hard)
                 elif choice and pygame.sprite.spritecollideany(mouse, group_choices):
-                    hardness = game_hardness[pygame.sprite.spritecollideany(mouse, group_choices).name]
-                    return hardness
+                    button = pygame.sprite.spritecollideany(mouse, group_choices)
+
+                    for item in group_choices.sprites():
+                        item.unchoose_button()
+                    button.choose_button()
+
+                    hardness = game_hardness[button.name]
+
         pygame.display.flip()
         clock.tick(FPS)
 

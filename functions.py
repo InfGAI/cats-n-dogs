@@ -8,7 +8,7 @@ def load_image(name, size=None, dir=None, color_key=None):
     Если size - кортеж, то размер size, если size - число, то высотой size с сохранением исходных пропорций'''
     if dir is not None:
         name = os.path.join(dir, name)
-
+    print(name)
     try:
         image = pygame.image.load(name)
 
