@@ -1,5 +1,5 @@
 import pygame
-import os
+import pygame_gui as gui
 import sys
 from functions import load_image, terminate
 
@@ -110,13 +110,13 @@ def start_screen(screen, size, clock, FPS):
 
 def end_screen(screen, size, clock, FPS, speed, cat, dog):
     WIDTH, HEIGHT = size
-
+    manager = gui.UIManager(size)
     line = f'{cat.name}     {cat.score}' + ' ' * 60 + f'{dog.name}     {dog.score}'
     fon = load_image('winner.jpg', (WIDTH, HEIGHT), dir='data')
     cat.dir = 'idle'
     dog.dir = 'idle'
     font = pygame.font.Font(None, 50)
-    text_coord = 50
+    clock = pygame.time.Clock()
     loser_is_move = True
     string_rendered = font.render(line, 1, pygame.Color('red'))
     line_rect = string_rendered.get_rect()
@@ -134,19 +134,31 @@ def end_screen(screen, size, clock, FPS, speed, cat, dog):
     else:
         no_winner = True
     is_move = False
-
+    btn_new_game = gui.elements.UIButton(
+        relative_rect=pygame.Rect((20, HEIGHT - 150), (150, 100)),
+        text='В начало',
+        manager=manager
+    )
     stop = False
     while True:
-        screen.blit(fon, (0, 0))
-        screen.blit(string_rendered, (10, 20))
+        time_delta = clock.tick(60) / 1000.0
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                terminate()
+                return False
+
             elif (event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN) and not is_move and not stop:
                 if not no_winner:
                     winner.dir = 'run'
                     is_move = True
                     distance = abs(loser.rect.x - winner.rect.x)
+            if event.type == pygame.USEREVENT:
+                if event.user_type == gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == btn_new_game:
+                        return True
+
+            manager.process_events(event)
+
         if is_move and not no_winner:
             if not pygame.sprite.collide_rect_ratio(0.5)(loser, winner):
                 if abs(loser.rect.x - winner.rect.x) * 2 > distance:
@@ -164,4 +176,9 @@ def end_screen(screen, size, clock, FPS, speed, cat, dog):
         screen.blit(cat.image, cat.rect)
         screen.blit(dog.image, dog.rect)
         pygame.display.flip()
+        manager.update(time_delta)
+
+        screen.blit(fon, (0, 0))
+        screen.blit(string_rendered, (10, 20))
+        manager.draw_ui(screen)
         clock.tick(FPS)
