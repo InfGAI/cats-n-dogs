@@ -28,8 +28,9 @@ def score(cat, dog):
 
 repeat = True  # на финальном экране кнопка В начало позволяет начать с начала
 while repeat:
-    hardness, mode = start_screen(screen, FPS)  # на стартовом экране выбирается сложность игры(по-умолчанию easy)
-    cards = board.Board(WIDTH, HEIGHT, 'cards.jpg', hardness)
+    hardness, mode, spritesheet = start_screen(screen,
+                                               FPS)  # на стартовом экране выбирается сложность игры(по-умолчанию easy)
+    cards = board.Board(WIDTH, HEIGHT, spritesheet, hardness)
     speed = cards.cell_size[0] // (FPS // 2)  # скорость пережвижения в зависимости от размеров игрового поля
     if mode == 2:
         # 2 игрока

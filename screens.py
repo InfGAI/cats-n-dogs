@@ -2,6 +2,7 @@ import pygame
 import pygame_gui as gui
 from functions import load_image, terminate
 from players import Player
+from dialogs import file_dialog
 
 
 class Buttons(pygame.sprite.Sprite):
@@ -78,6 +79,7 @@ def group_click(mouse, group):
         print(button.name)
         return button.name
 
+
 def start_screen(screen, FPS):
     """Стартовый экран игры
     :param screen: родительский экран
@@ -90,6 +92,7 @@ def start_screen(screen, FPS):
     game_mode = {'single': 1, 'multi': 2}  # Количество игроков
     hardness = game_hardness['easy']  # по-умолчанию простой, меняется при выборе Options
     mode = 2  # по-умолчанию 2 игрока
+    spritesheet = 'cards.jpg'
     fon = load_image('bg.png', size, dir='data')
     screen.blit(fon, (0, 0))
     main_buttons = pygame.sprite.Group()
@@ -113,6 +116,10 @@ def start_screen(screen, FPS):
                      proc=7, name='normal', group=level_buttons)
     hard = Buttons('data/Button10.png', 'data/Text/hard.png', normal.rect.right + 20, normal.rect.bottom + 5, size=size,
                    proc=7, name='hard', group=level_buttons)
+
+    picture = Buttons('data/Button07.png', 'data/Text/TxtMore.png', 0, 0, name='picture', size=size, proc=10,
+                      group=main_buttons)
+    picture.rect.topright = (size[0] - 10, size[1] * 7 // 8)
     # Формируем надпись
     intro_text = ['Цель игры:', 'собрать как можно больше карточек и ',
                   'поразить всех своей феноменальной способностью запоминать.']
@@ -141,7 +148,7 @@ def start_screen(screen, FPS):
                 mouse = Buttons('data/Button10.png', 'data/Text/hard.png', x, y)
                 mouse.resize((1, 1))
                 if play.rect.colliderect(mouse.rect):
-                    return (hardness, mode)  # начинаем игру по кнопке Play
+                    return (hardness, mode, spritesheet)  # начинаем игру по кнопке Play
                 if options.rect.colliderect(mouse.rect):
                     # При нажатии на кнопку Options показываем кнопки сложности
                     level_buttons.update(screen)
@@ -151,6 +158,8 @@ def start_screen(screen, FPS):
                 check_mode = group_click(mouse, mode_buttons)
                 if check_mode is not None:
                     mode = game_mode[check_mode]
+                if picture.rect.colliderect(mouse.rect):
+                    spritesheet = file_dialog()
 
         pygame.display.flip()
         clock.tick(FPS)
