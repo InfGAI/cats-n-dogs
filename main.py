@@ -77,6 +77,7 @@ while repeat:
             is_move = current_player.move(x1, y1, speed)
         else:
             current_player.dir = 'idle'
+        # Если персонаж открыл пару, он имеет право на повторный ход, в противном случае карты закрываются
         if card_checked:
             current_card = (cell_y, cell_x)
             if count % 2 == 1:
@@ -95,9 +96,9 @@ while repeat:
         players_group.update()
         players_group.draw(screen)
         pygame.display.flip()
+        # Как только вскрыты все карты завершаем игру и переходим к итоговому экрану
         if 2 * (cat.score + dog.score) == hardness[0] * hardness[1]:
             running = False
-
         clock.tick(FPS)
-    repeat = end_screen(screen, FPS, speed, cat, dog)
+    repeat = end_screen(screen, FPS, speed, cat, dog)  # На финальном экране есть кнопка В начало
 terminate()

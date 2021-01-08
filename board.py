@@ -107,7 +107,6 @@ class Board():
         if self.board[card1[0]][card1[1]][0] == self.board[card2[0]][card2[1]][0] and \
                 self.board[card1[0]][card1[1]][0] not in self.opened:
             self.opened.add(self.board[card1[0]][card1[1]][0])
-            print('opened ', self.opened)
             return True
         else:
             return False
