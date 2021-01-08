@@ -2,7 +2,6 @@
 import pygame
 from random import shuffle
 from functions import load_image
-
 # Разметка spritesheet с карточками
 COLUMNS = 5
 ROWS = 5
@@ -12,7 +11,6 @@ class Board():
     """Класс игрового поля
 
     """
-
     def __init__(self, width, height, path, hardness):
         """Доска в картами
         :param width: ширина

@@ -14,7 +14,6 @@ def load_image(name, size=None, dir=None, color_key=None):
     """
     if dir is not None:
         name = os.path.join(dir, name)
-    print(name)
     try:
         image = pygame.image.load(name)
 
