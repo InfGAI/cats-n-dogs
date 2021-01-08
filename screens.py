@@ -7,10 +7,8 @@ class Buttons(pygame.sprite.Sprite):
     """Класс пользовательских кнопок
 
     """
-
     def __init__(self, btn, txt, pos_x, pos_y, size=None, proc=None, name=None):
         """Кнопка с изображением и надписью
-
         :param btn: файл изорбражения
         :param txt: файл надписи
         :param pos_x: координата размещения x
@@ -18,11 +16,12 @@ class Buttons(pygame.sprite.Sprite):
         :param size: размер экрана
         :param proc: размер кнопки в процентах от экрана по высоте
         :param name: внутренее имя
+
         """
         super().__init__()
         self.txt = load_image(txt)
         self.size = self.txt.get_rect().size
-        if size:
+        if size is not None:
             koeff = self.size[0] / self.size[1]
             self.size = (int(size[1] * proc // 100 * koeff), size[1] * proc // 100)
 
@@ -203,7 +202,6 @@ def end_screen(screen, FPS, speed, cat, dog):
                 winner.dir = 'jump'
                 FPS = 5
                 loser.dir = 'hurt'
-
         cat.update()
         dog.update()
         screen.blit(cat.image, cat.rect)

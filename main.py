@@ -86,7 +86,7 @@ while repeat:
                     count -= 2
                 card2 = current_card
             else:
-                if card2:
+                if card2 is not None:
                     if not cards.check(card1, card2):
                         cards.close(card1, card2)
                 card1 = current_card
@@ -101,4 +101,5 @@ while repeat:
             running = False
         clock.tick(FPS)
     repeat = end_screen(screen, FPS, speed, cat, dog)  # На финальном экране есть кнопка В начало
+
 terminate()
