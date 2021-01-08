@@ -14,6 +14,8 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Кошечки и собачки')
+win_sound = pygame.mixer.Sound('data/win.mp3')
+pygame.mixer.music.load('data/champions.mp3')
 
 
 def score(cat, dog):
@@ -82,9 +84,13 @@ while repeat:
             current_card = (cell_y, cell_x)
             if count % 2 == 1:
                 if cards.check(card1, current_card):
+                    win_sound.play()
                     current_player.score += 1
                     count -= 2
+                else:
+                    pygame.mixer.stop()
                 card2 = current_card
+
             else:
                 if card2 is not None:
                     if not cards.check(card1, card2):
@@ -100,6 +106,8 @@ while repeat:
         if 2 * (cat.score + dog.score) == hardness[0] * hardness[1]:
             running = False
         clock.tick(FPS)
+    pygame.mixer.stop()
+    pygame.mixer.music.play()
     repeat = end_screen(screen, FPS, speed, cat, dog)  # На финальном экране есть кнопка В начало
 
 terminate()
