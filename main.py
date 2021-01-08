@@ -4,16 +4,16 @@ from screens import start_screen, end_screen
 import board
 import players
 
-pygame.init()
-pygame.key.set_repeat(200, 70)
-
 FPS = 30
 WIDTH = 1000
 HEIGHT = 600
 STEP = 10
 
+pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption('Кошечки и собачки')
 
 
 def score(cat, dog):
@@ -24,19 +24,15 @@ def score(cat, dog):
     return font.render(line, 1, pygame.Color('white'))
 
 
-repeat = True
+repeat = True  # на финальном экране кнопка В начало позволяет начать с начала
 while repeat:
-    hardness = start_screen(screen, (WIDTH, HEIGHT), clock, FPS)
-
-    running = True
-    players_group = pygame.sprite.Group()
+    hardness = start_screen(screen, FPS)  # на стартовом экране выбирается сложность игры(по-умолчанию easy)
     cards = board.Board(WIDTH, HEIGHT, 'cards.jpg', hardness)
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption('Кошечки и собачки')
-    speed = cards.cell_size[0] // (FPS // 2)  # скорость пережвижения
-
+    speed = cards.cell_size[0] // (FPS // 2)  # скорость пережвижения в зависимости от размеров игрового поля
+    # 2 игрока
+    players_group = pygame.sprite.Group()
     cat = players.Player('cat', cards.cell_size[1], cards.left, cards.top, 'Кошечка')
-    dog = players.Player('dog', cards.cell_size[1], cards.left, cards.top, 'Собачка')
+    dog = players.Player('dog', cards.cell_size[1], cat.rect.right, cards.top, 'Собачка')
     players_group.add(cat)
     players_group.add(dog)
     dir = 'idle'
@@ -47,6 +43,9 @@ while repeat:
     winner = None
     current_player = dog
     past_player = cat
+
+    # Основной игровой цикл
+    running = True
     while running:
         screen.fill((0, 0, 0))
         screen.blit(score(cat, dog), (50, 10))
@@ -55,12 +54,15 @@ while repeat:
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if not is_move:
+                # По клику мыши вскрываем карточку и персонаж бежит к ней
+                if not is_move:  # Запрет на смену траектории движения, если карта уже выбрана
                     cards.get_click(event.pos)
                     x, y = event.pos
-                    x1 = (((x - cards.left) // cards.cell_size[0]) * cards.cell_size[0]) + cards.left
-                    y1 = (((y - cards.top) // cards.cell_size[1]) * cards.cell_size[1]) + cards.top
-                    if cards.left < x < cards.right and cards.top < y < cards.bottom:
+                    if cards.rect.collidepoint(x, y):  # Проверяем, что кликнули по игровому полю
+                        cell_y, cell_x = cards.get_cell(event.pos)
+                        # Цель персонажа - начало выбранной карты
+                        x1 = (cell_x * cards.cell_size[0]) + cards.left
+                        y1 = (cell_y * cards.cell_size[1]) + cards.top
                         is_move = True
                         count = (count + 1) % 4
                         card_checked = True
@@ -70,28 +72,22 @@ while repeat:
                         else:
                             current_player = dog
                             past_player = cat
-                        print(current_player.name, count)
-
-                    start_time = pygame.time.get_ticks()
+                        start_time = pygame.time.get_ticks()
         if is_move:
             is_move = current_player.move(x1, y1, speed)
         else:
             current_player.dir = 'idle'
-
         if card_checked:
-            current_card = ((y - cards.top) // cards.cell_size[1], (x - cards.left) // cards.cell_size[0])
+            current_card = (cell_y, cell_x)
             if count % 2 == 1:
                 if cards.check(card1, current_card):
                     current_player.score += 1
                     count -= 2
                 card2 = current_card
-
             else:
                 if card2:
                     if not cards.check(card1, card2):
-                        cards.close(card1)
-                        cards.close(card2)
-
+                        cards.close(card1, card2)
                 card1 = current_card
                 card2 = None
 
@@ -103,5 +99,5 @@ while repeat:
             running = False
 
         clock.tick(FPS)
-    repeat = end_screen(screen, (WIDTH, HEIGHT), clock, FPS, speed, cat, dog)
+    repeat = end_screen(screen, FPS, speed, cat, dog)
 terminate()

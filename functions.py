@@ -1,11 +1,17 @@
+# Модуль вспомогательных функций
 import pygame
 import sys
 import os
 
 
 def load_image(name, size=None, dir=None, color_key=None):
-    ''' возвращает экземпляр Surface с изображением из файла name их папки dir.
-    Если size - кортеж, то размер size, если size - число, то высотой size с сохранением исходных пропорций'''
+    """Создание Surface с изображением
+    :param name: фйал изображения
+    :param size: кортеж размеров либо число-высота с сохранением исходных пропорций
+    :param dir: папка изображения
+    :param color_key: -1 если нужно вырезать фон
+    :return: Surface
+    """
     if dir is not None:
         name = os.path.join(dir, name)
     print(name)
@@ -28,10 +34,12 @@ def load_image(name, size=None, dir=None, color_key=None):
         image = image.convert()
     else:
         image = image.convert_alpha()
-
     return image
 
 
 def terminate():
+    """Корректное завершение программы
+
+    """
     pygame.quit()
     sys.exit()
