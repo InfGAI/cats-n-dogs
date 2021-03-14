@@ -1,7 +1,10 @@
 # Модуль описания игрового поля
-import pygame
 from random import shuffle
+
+import pygame
+
 from functions import load_image
+
 # Разметка spritesheet с карточками
 COLUMNS = 5
 ROWS = 5
@@ -9,15 +12,14 @@ ROWS = 5
 
 class Board():
     """Класс игрового поля
-
     """
+
     def __init__(self, width, height, path, hardness):
         """Доска в картами
         :param width: ширина
         :param height: высота
         :param path: файл spritesheet
         :param hardness: кортеж - количество карточек по ширине и высоте
-
         """
         self.columns, self.rows = hardness
         self.left = width // 10
@@ -44,7 +46,6 @@ class Board():
         """Игровое поле карточек
         :param image: файл spritesheet
         :return: Surface с игровым полем
-
         """
         frames = []
         img = load_image(image, dir='data')
@@ -60,7 +61,6 @@ class Board():
     def render(self, screen):
         """Отрисовка игрового поля в соответствии с логической доской
         :param screen: родительский экран
-
         """
         for i in range(self.rows):
             for j in range(self.columns):
@@ -75,7 +75,6 @@ class Board():
         """ Преобразует еоординаты лкика в координаты логической доски
         :param pos: Координаты клика мыши
         :return: "Координаты" логической доски или None, если клик за ее пределами
-
         """
         if self.left + self.cell_size[0] * self.columns >= pos[0] >= self.left:
             x = (pos[0] - self.left) // self.cell_size[0]
@@ -90,7 +89,6 @@ class Board():
     def get_click(self, mouse_pos):
         """Отмечает карту в логическо доске как вскрытую
          :param mouse_pos: координаты клика мыши
-
          """
         cell_coords = self.get_cell(mouse_pos)
         if cell_coords:
@@ -112,7 +110,6 @@ class Board():
     def close(self, *args):
         """Переворачивает карточку рубашкой вверх
         :param args: координаты логической доски карт, которые нужно перевернуть, если они не отмечены как совпавшие
-
         """
         for i in args:
             x, y = i

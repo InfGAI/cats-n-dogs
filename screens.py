@@ -1,8 +1,9 @@
 import pygame
 import pygame_gui as gui
+
+from dialogs import file_dialog
 from functions import load_image, terminate
 from players import Player
-from dialogs import file_dialog
 
 
 class Buttons(pygame.sprite.Sprite):

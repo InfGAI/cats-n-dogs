@@ -1,6 +1,8 @@
 import os
-from functions import load_image
+
 import pygame
+
+from functions import load_image
 
 STEP = 10
 

@@ -1,7 +1,8 @@
 # Модуль вспомогательных функций
-import pygame
-import sys
 import os
+import sys
+
+import pygame
 
 
 def load_image(name, size=None, dir=None, color_key=None):

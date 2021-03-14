@@ -1,8 +1,9 @@
-from functions import load_image, terminate
 import pygame
-from screens import start_screen, end_screen
+
 import board
 import players
+from functions import terminate
+from screens import start_screen, end_screen
 
 FPS = 30
 WIDTH = 1000
@@ -17,10 +18,17 @@ pygame.display.set_caption('Кошечки и собачки')
 win_sound = pygame.mixer.Sound('data/win.mp3')
 
 
-
 def score(cat, dog):
-    # возвращает текст счёта
+    # возвращает текст счёта для мульти режима
     line = f'Кошечка {cat.score}         Собачка {dog.score}'
+    font = pygame.font.Font(None, 30)
+    text_coord = 30
+    return font.render(line, 1, pygame.Color('white'))
+
+
+def time(min, sec):
+    # возвращает надпись со временем игры для одиночного режима
+    line = f'Прошло: {min}:{sec}'
     font = pygame.font.Font(None, 30)
     text_coord = 30
     return font.render(line, 1, pygame.Color('white'))
@@ -60,6 +68,10 @@ while repeat:
         screen.fill((0, 0, 0))
         if mode == 2:
             screen.blit(score(cat, dog), (50, 10))
+        else:
+            ticks = pygame.time.get_ticks()
+            screen.blit(time(ticks // 60000, ticks // 1000 % 60), (50, 10))
+
         card_checked = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
