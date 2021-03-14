@@ -66,6 +66,7 @@ while repeat:
     running = True
     while running:
         screen.fill((0, 0, 0))
+        # Устанавливаем надписи для разных режимов
         if mode == 2:
             screen.blit(score(cat, dog), (50, 10))
         else:
@@ -96,7 +97,7 @@ while repeat:
                             else:
                                 current_player = dog
                                 past_player = cat
-                        start_time = pygame.time.get_ticks()
+
         if is_move:
             is_move = current_player.move(x1, y1, speed)
         else:
@@ -133,6 +134,7 @@ while repeat:
     if mode == 2:
         repeat = end_screen(screen, FPS, speed, cat, dog)  # На финальном экране есть кнопка В начало
     else:
-        repeat = end_screen(screen, FPS, speed, cat)
+        min, sec = ticks // 60000, ticks // 1000 % 60
+        repeat = end_screen(screen, FPS, speed, cat, time=(min, sec))
 
 terminate()

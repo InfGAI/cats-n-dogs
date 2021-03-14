@@ -166,7 +166,7 @@ def start_screen(screen, FPS):
         clock.tick(FPS)
 
 
-def end_screen(screen, FPS, speed, *players):
+def end_screen(screen, FPS, speed, *players, time=None):
     """Заключительный экран
     :param screen: родительский экран
     :param FPS: частота кадров
@@ -193,7 +193,13 @@ def end_screen(screen, FPS, speed, *players):
     # Формируем надпись
     line = f'{cat.name}     {cat.score}' + ' ' * 60 + f'{dog.name}     {dog_score}'
     font = pygame.font.Font(None, 50)
-    string_rendered = font.render(line, 1, pygame.Color('red'))
+    string_score = font.render(line, 1, pygame.Color('red'))
+    string_time = ''
+    if time:
+        line = f'Время прохождения - {time[0]}мин {time[1]}сек'
+        font = pygame.font.Font(None, 30)
+        string_time = font.render(line, 1, pygame.Color('red'))
+
     # Размещаем персонажей на экране
     cat.dir = 'idle'
     dog.dir = 'idle'
@@ -249,6 +255,7 @@ def end_screen(screen, FPS, speed, *players):
         pygame.display.flip()
         manager.update(FPS)
         screen.blit(fon, (0, 0))
-        screen.blit(string_rendered, (10, 20))
+        screen.blit(string_score, (10, 20))
+        screen.blit(string_time, (WIDTH // 2 - 20, 20))
         manager.draw_ui(screen)
         clock.tick(FPS)
